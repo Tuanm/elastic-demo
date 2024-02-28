@@ -1,0 +1,12 @@
+@host={{ELASTIC_HOST}}
+@user={{ELASTIC_USER}}
+@password={{ELASTIC_PASSWORD}}
+###
+{{+request
+    const basicAuth = Buffer.from(`${user}:${password}`).toString('base64')
+    request.headers['Authorization'] = `Basic ${basicAuth}`
+}}
+###
+GET /_cat/nodes
+###
+GET /_cat/indices

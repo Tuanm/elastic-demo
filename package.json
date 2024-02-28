@@ -1,0 +1,13 @@
+{
+  "type": "module",
+  "scripts": {
+    "docker:up": "docker compose --project-directory .docker up -d",
+    "docker:down": "docker compose --project-directory .docker down"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
