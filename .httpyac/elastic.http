@@ -5,8 +5,147 @@
 {{+request
     const basicAuth = Buffer.from(`${user}:${password}`).toString('base64')
     request.headers['Authorization'] = `Basic ${basicAuth}`
+    request.headers['Content-Type'] = 'application/json'
 }}
 ###
 GET /_cat/nodes
 ###
 GET /_cat/indices
+###
+PUT /du22
+
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "email_analyzer": {
+                    "tokenizer": "email_tokenizer"
+                }
+            },
+            "tokenizer": {
+                "email_tokenizer": {
+                    "type": "uax_url_email"
+                }
+            }
+        }
+    },
+    "mappings": {
+        "id": {
+            "type": "keyword"
+        },
+        "email": {
+            "type": "text",
+            "analyzer": "email_analyzer",
+            "fields": {
+                "keyword": {
+                    "type": "keyword"
+                }
+            }
+        },
+        "full_name": {
+            "type": "text",
+            "fields": {
+                "keyword": {
+                    "type": "keyword"
+                }
+            }
+        },
+        "date_of_birth": {
+            "type": "date"
+        },
+        "division": {
+            "type": "constant_keyword",
+            "value": "DU22"
+        }
+    }
+}
+###
+PUT /other_dus
+
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "email_analyzer": {
+                    "tokenizer": "email_tokenizer"
+                }
+            },
+            "tokenizer": {
+                "email_tokenizer": {
+                    "type": "uax_url_email"
+                }
+            }
+        }
+    },
+    "mappings": {
+        "id": {
+            "type": "keyword"
+        },
+        "email": {
+            "type": "text",
+            "analyzer": "email_analyzer",
+            "fields": {
+                "keyword": {
+                    "type": "keyword"
+                }
+            }
+        },
+        "full_name": {
+            "type": "text",
+            "fields": {
+                "keyword": {
+                    "type": "keyword"
+                }
+            }
+        },
+        "date_of_birth": {
+            "type": "date"
+        },
+        "division": {
+            "type": "keyword"
+        }
+    }
+}
+###
+POST /du22/_doc
+
+{
+    "id": "2374",
+    "email": "tuandm1@vmogroup.com",
+    "full_name": "Do Minh Tuan",
+    "date_of_birth": "2000-06-14"
+}
+###
+POST /_aliases
+
+{
+    "actions": [
+        {
+            "add": {
+                "index": "du22",
+                "alias": "vmoers",
+                "is_write_index": false
+            }
+        },
+        {
+            "add": {
+                "index": "other_dus",
+                "alias": "vmoers",
+                "is_write_index": false
+            }
+        }
+    ]
+}
+###
+GET /vmoers/_search
+
+{
+    "query": {
+        "match_phrase": {
+            "full_name": {
+                "query": "Do Tuan",
+                "slop": 1
+            }
+        }
+    }
+}
